@@ -27,13 +27,19 @@ NSDictionary *XCDStreamingDataWithString(NSString *string)
 	return JSON[@"streamingData"];
 }
 
-NSString *XCDHTTPLiveStreamingStringWithString(NSString *string)
+NSString *XCDHTTPLiveStreamingStringWithDictionary(NSDictionary *dictionary)
 {
-	NSDictionary *streamingData = XCDStreamingDataWithString(string);
-	NSString *manifestURL = streamingData[@"hlsManifestUrl"];
+	NSString *manifestURL = dictionary[@"hlsManifestUrl"];
 	if (manifestURL.length == 0) { return nil; }
 	
 	return manifestURL;
+}
+
+NSString *XCDHTTPLiveStreamingStringWithString(NSString *string)
+{
+	NSDictionary *streamingData = XCDStreamingDataWithString(string);
+	
+	return XCDHTTPLiveStreamingStringWithDictionary(streamingData);
 }
 
 NSArray <NSDictionary *> *XCDThumnailArrayWithString(NSString *string)
@@ -170,7 +176,7 @@ static NSDate * ExpirationDate(NSURL *streamURL)
 	NSString *playerResponse = info[@"player_response"];
 	NSString *streamMap = info[@"url_encoded_fmt_stream_map"];
 	NSArray *alternativeStreamMap = XCDStreamingDataWithString(playerResponse)[@"formats"] == nil ? info[@"streamingData"][@"formats"] : XCDStreamingDataWithString(playerResponse)[@"formats"];
-	NSString *httpLiveStream = info[@"hlsvp"] ?: XCDHTTPLiveStreamingStringWithString(playerResponse);
+	NSString *httpLiveStream = info[@"hlsvp"] ?: XCDHTTPLiveStreamingStringWithString(playerResponse) ?: XCDHTTPLiveStreamingStringWithDictionary(info[@"streamingData"]);
 	NSString *adaptiveFormats = info[@"adaptive_fmts"];
 	NSArray *alternativeAdaptiveFormats = XCDStreamingDataWithString(playerResponse)[@"adaptiveFormats"]  == nil ? info[@"streamingData"][@"adaptiveFormats"] : XCDStreamingDataWithString(playerResponse)[@"adaptiveFormats"];
 	NSDictionary *videoDetails = XCDDictionaryWithString(playerResponse)[@"videoDetails"] == nil ? info[@"videoDetails"] : XCDDictionaryWithString(playerResponse)[@"videoDetails"];
