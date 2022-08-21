@@ -166,7 +166,7 @@ static NSDate * ExpirationDate(NSURL *streamURL)
 	return expire > 0 ? [NSDate dateWithTimeIntervalSince1970:expire] : nil;
 }
 
-- (instancetype) initWithIdentifier:(NSString *)identifier info:(NSDictionary *)info playerScript:(XCDYouTubePlayerScript *)playerScript response:(NSURLResponse *)response error:(NSError * __autoreleasing *)error
+- (instancetype) initWithIdentifier:(NSString *)identifier info:(NSDictionary *)info fullJson:(NSDictionary *)fullJson playerScript:(XCDYouTubePlayerScript *)playerScript response:(NSURLResponse *)response error:(NSError * __autoreleasing *)error
 {
 	if (!(self = [super init]))
 		return nil; // LCOV_EXCL_LINE
@@ -203,6 +203,8 @@ static NSDate * ExpirationDate(NSURL *streamURL)
 		if (title == nil)
 			title = @"";
 		_title = title;
+        
+        _isLiveContent = [fullJson[@"videoDetails"][@"isLiveContent"] boolValue];
 		
 		NSString *author = info[@"author"] == nil? videoDetails[@"author"] : info[@"author"];
 		if (author == nil)

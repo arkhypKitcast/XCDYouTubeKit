@@ -20,7 +20,7 @@ extern NSDictionary *XCDStreamingDataWithString(NSString *string);
 
 @interface XCDYouTubeVideo ()
 
-- (instancetype) initWithIdentifier:(NSString *)identifier info:(NSDictionary *)info playerScript:(XCDYouTubePlayerScript *)playerScript response:(NSURLResponse *)response error:(NSError **)error;
+- (instancetype) initWithIdentifier:(NSString *)identifier info:(NSDictionary *)info fullJson:(NSDictionary *)fullJson playerScript:(XCDYouTubePlayerScript *)playerScript response:(NSURLResponse *)response error:(NSError **)error;
 
 - (void) mergeVideo:(XCDYouTubeVideo *)video;
 - (void) mergeDashManifestStreamURLs:(NSDictionary *)dashManifestStreamURLs;

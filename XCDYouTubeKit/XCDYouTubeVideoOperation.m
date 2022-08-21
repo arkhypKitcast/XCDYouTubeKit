@@ -279,9 +279,15 @@ static NSError *YouTubeError(NSError *error, NSSet *regionsAllowed, NSString *la
 	
 	switch (requestType)
 	{
-		case XCDYouTubeRequestTypeGetVideoInfo:
-			[self handleVideoInfoResponseWithInfo:XCDDictionaryWithQueryString(responseString) response:response];
-			break;
+		case XCDYouTubeRequestTypeGetVideoInfo: {
+            NSError *jsonError;
+            NSData *objectData = [responseString dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                  options:NSJSONReadingMutableContainers
+                                                    error:&jsonError];
+            [self handleVideoInfoResponseWithInfo:XCDDictionaryWithQueryString(responseString) fullJson:json response:response];
+            break;
+        }
 		case XCDYouTubeRequestTypeWatchPage:
 			[self handleWebPageWithHTMLString:responseString];
 			break;
@@ -315,12 +321,12 @@ static NSError *YouTubeError(NSError *error, NSSet *regionsAllowed, NSString *la
 
 #pragma mark - Response Parsing
 
-- (void) handleVideoInfoResponseWithInfo:(NSDictionary *)info response:(NSURLResponse *)response
+- (void) handleVideoInfoResponseWithInfo:(NSDictionary *)info fullJson:(NSDictionary *)fullJson response:(NSURLResponse *)response
 {
 	XCDYouTubeLogDebug(@"Handling video info response");
 	
 	NSError *error = nil;
-	XCDYouTubeVideo *video = [[XCDYouTubeVideo alloc] initWithIdentifier:self.videoIdentifier info:info playerScript:self.playerScript response:response error:&error];
+	XCDYouTubeVideo *video = [[XCDYouTubeVideo alloc] initWithIdentifier:self.videoIdentifier info:info fullJson:fullJson playerScript:self.playerScript response:response error:&error];
 	if (video)
 	{
 		self.lastSuccessfulVideo = video;
@@ -410,7 +416,7 @@ static NSError *YouTubeError(NSError *error, NSSet *regionsAllowed, NSString *la
 	}
 	else
 	{
-		[self handleVideoInfoResponseWithInfo:self.webpage.videoInfo response:nil];
+        [self handleVideoInfoResponseWithInfo:self.webpage.videoInfo fullJson:self.webpage.videoInfo response:nil];
 	}
 }
 

@@ -70,6 +70,10 @@ extern NSString *const XCDYouTubeVideoQualityHTTPLiveStreaming;
  */
 @property (nonatomic, readonly) NSString *title;
 /**
+ *  The Live Content indicator.
+ */
+@property (nonatomic, readonly) BOOL isLiveContent;
+/**
  * The name of author that uploaded this video.
  */
 @property (nonatomic, readonly) NSString *author;
